@@ -17,6 +17,11 @@ module.exports = {
       url: process.env.GOERLI_NODE_RPC_URL,
       accounts,
     },
+    sepolia: {
+      chainId: 11155111,
+      url: process.env.SEPOLIA_NODE_RPC_URL,
+      accounts,
+    },
   },
   paths: {
     sources: "centre-tokens/contracts",
@@ -36,8 +41,9 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
-      goerli: process.env.GOERLI_ETHERSCAN_API_KEY,
+      mainnet: process.env.ETHERSCAN_API_KEY,
+      goerli: process.env.ETHERSCAN_API_KEY,
+      sepolia: process.env.ETHERSCAN_API_KEY,
     },
   },
 };
