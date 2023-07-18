@@ -7,6 +7,7 @@
 ## Setup
 
 ```bash
+$ git submodule update --init
 $ npm install
 ```
 
