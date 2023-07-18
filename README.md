@@ -1,5 +1,7 @@
 # centre-tokens-hardhat-deployer
 
+Use `hardhat` to deploy contracts in [centre-tokens](https://github.com/centrehq/centre-tokens/tree/master).
+
 ## Environment
 
 - Node >= 16
