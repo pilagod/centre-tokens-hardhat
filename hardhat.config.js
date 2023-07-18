@@ -18,6 +18,9 @@ module.exports = {
       accounts,
     },
   },
+  paths: {
+    sources: "centre-tokens/contracts",
+  },
   solidity: {
     compilers: [
       {
