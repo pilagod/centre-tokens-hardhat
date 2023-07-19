@@ -24,3 +24,4 @@ $ npm run deploy:v1 -- --network [NETWORK]
 ```
 
 * `NETWORK` now supports `mainnet`, `goerli` and `sepolia`.
+* This script will also ask for verifying source code of proxy and implementation contracts. Remember to setup `ETHERSCAN_API_KEY` beforehand, and then press `y` when it shows the confirmation dialog.
