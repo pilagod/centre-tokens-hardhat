@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy:v1": "hardhat run scripts/deployV1.js"
+    "deploy:v1": "hardhat run scripts/deployV1.js",
+    "deploy:v2": "hardhat run scripts/deployV2.js"
   },
   "author": "pilagooood<pilagooood@gmail.com>",
   "license": "MIT",

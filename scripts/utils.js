@@ -3,6 +3,12 @@ const { network } = require("hardhat");
 const prompts = require("prompts");
 
 module.exports = {
+  /* Constants */
+
+  THROWAWAY_ADDRESS: "0x0000000000000000000000000000000000000001",
+
+  /* Functions  */
+
   promptGasPrice: async () => {
     const gwei = ethers.utils.parseUnits("1", "gwei");
 

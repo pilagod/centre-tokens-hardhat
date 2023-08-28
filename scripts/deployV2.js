@@ -49,19 +49,21 @@ async function main() {
 
   /* Deploy Implementation */
 
-  const FiatTokenV1Factory = await ethers.getContractFactory("FiatTokenV1");
+  const FiatTokenV2_1Factory = await ethers.getContractFactory("FiatTokenV2_1");
 
   console.log("Deploying implementation contract...");
-  const fiatTokenV1 = await FiatTokenV1Factory.connect(operator).deploy({
+  const fiatTokenV2_1 = await FiatTokenV2_1Factory.connect(operator).deploy({
     gasPrice: await promptGasPrice(),
   });
-  await fiatTokenV1.deployed();
-  console.log("Deployed implementation contract at", fiatTokenV1.address);
+  await fiatTokenV2_1.deployed();
+  console.log("Deployed implementation contract at", fiatTokenV2_1.address);
 
   /* Initialize Implementation */
 
   console.log("Initializing implementation contract with dummy values...");
-  const initImplTx = await fiatTokenV1
+
+  console.log(`Init v1 impl...`);
+  const initV1ImplTx = await fiatTokenV2_1
     .connect(operator)
     .initialize(
       "",
@@ -76,8 +78,25 @@ async function main() {
         gasPrice: promptGasPrice(),
       }
     );
-  console.log(`Init v1 impl tx: ${initImplTx.hash}`);
-  await initImplTx.wait();
+  console.log(`Init v1 impl tx: ${initV1ImplTx.hash}`);
+  await initV1ImplTx.wait();
+
+  console.log(`Init v2 impl...`);
+  const initV2ImplTx = await fiatTokenV2_1.connect(operator).initializeV2("", {
+    gasPrice: promptGasPrice(),
+  });
+  console.log(`Init v2 impl tx: ${initV2ImplTx.hash}`);
+  await initV2ImplTx.wait();
+
+  console.log(`Init v2_1 impl...`);
+  const initV2_1ImplTx = await fiatTokenV2_1
+    .connect(operator)
+    .initializeV2_1(THROWAWAY_ADDRESS, {
+      gasPrice: promptGasPrice(),
+    });
+  console.log(`Init v2_1 impl tx: ${initV2_1ImplTx.hash}`);
+  await initV2_1ImplTx.wait();
+
   console.log(`Initialized implementation contract`);
 
   /* Deploy Proxy */
@@ -87,7 +106,7 @@ async function main() {
   );
   console.log("Deploying proxy contract...");
   const fiatTokenProxy = await FiatTokenProxyFactory.connect(operator).deploy(
-    fiatTokenV1.address,
+    fiatTokenV2_1.address,
     {
       gasPrice: promptGasPrice(),
     }
@@ -113,11 +132,13 @@ async function main() {
 
   console.log("Initializing proxy contract...");
 
-  // Pretend that the proxy address is a FiatTokenV1
-  // This is fine because the proxy will forward all the calls to the FiatTokenV1 impl
-  const fiatTokenV1Proxy = FiatTokenV1Factory.attach(fiatTokenProxy.address);
-
-  const initTx = await fiatTokenV1Proxy
+  // Pretend that the proxy address is a FiatTokenV2_1
+  // This is fine because the proxy will forward all the calls to the FiatTokenV2_1 impl
+  const fiatTokenV2_1Proxy = FiatTokenV2_1Factory.attach(
+    fiatTokenProxy.address
+  );
+  console.log(`Init v1...`);
+  const initV1Tx = await fiatTokenV2_1Proxy
     .connect(operator)
     .initialize(
       TOKEN_NAME,
@@ -132,21 +153,40 @@ async function main() {
         gasPrice: promptGasPrice(),
       }
     );
-  console.log(`Tx: ${initTx.hash}`);
-  await initTx.wait();
+  console.log(`Init v1 tx: ${initV1Tx.hash}`);
+  await initV1Tx.wait();
+
+  console.log(`Init v2...`);
+  const initV2Tx = await fiatTokenV2_1Proxy
+    .connect(operator)
+    .initializeV2(TOKEN_NAME, {
+      gasPrice: promptGasPrice(),
+    });
+  console.log(`Init v2 tx: ${initV2Tx.hash}`);
+  await initV2Tx.wait();
+
+  console.log(`Init v2_1...`);
+  const initV2_1Tx = await fiatTokenV2_1Proxy
+    .connect(operator)
+    .initializeV2_1(operator.address, {
+      gasPrice: promptGasPrice(),
+    });
+  console.log(`Init v2_1 tx: ${initV2_1Tx.hash}`);
+  await initV2_1Tx.wait();
+
   console.log("Initialized proxy contract");
 
   /* Verify Implementation and Proxy */
 
   await verifyContract(
-    "centre-tokens/contracts/v1/FiatTokenV1.sol:FiatTokenV1",
-    fiatTokenV1.address,
+    "centre-tokens/contracts/v2/FiatTokenV2_1.sol:FiatTokenV2_1",
+    fiatTokenV2_1.address,
     []
   );
   await verifyContract(
     "centre-tokens/contracts/v1/FiatTokenProxy.sol:FiatTokenProxy",
     fiatTokenProxy.address,
-    [fiatTokenV1.address]
+    [fiatTokenV2_1.address]
   );
 }
 
