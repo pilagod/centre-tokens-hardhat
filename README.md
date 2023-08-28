@@ -20,7 +20,11 @@ Please first refer to `.env.example` to check required configurations for deploy
 After setup your `.env`, run following commands to deploy:
 
 ```bash
+# Deploy FiatTokenV1
 $ npm run deploy:v1 -- --network [NETWORK]
+
+# Deploy FiatTokenV2_1
+$ npm run deploy:v2 -- --network [NETWORK]
 ```
 
 * `NETWORK` now supports `mainnet`, `goerli` and `sepolia`.
